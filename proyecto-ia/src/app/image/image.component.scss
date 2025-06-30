@@ -1,0 +1,56 @@
+.container {
+  max-width: 460px;
+  margin: 30px auto;
+  text-align: center;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 0 14px rgba(0,0,0,0.15);
+  background: linear-gradient(to top right, #f0f4f7, #ffffff);
+  font-family: "Segoe UI", sans-serif;
+}
+
+h2 {
+  margin-bottom: 25px;
+  color: #2c3e50;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.file-btn, .cam-btn, .submit-btn, .controls button {
+  background-color: #2980b9;
+  color: white;
+  padding: 12px 20px;
+  font-size: 15px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 8px 5px;
+  transition: background-color 0.3s ease;
+}
+
+.file-btn:hover, .cam-btn:hover, .submit-btn:hover, .controls button:hover {
+  background-color: #1f618d;
+}
+
+.file-btn input {
+  display: none;
+}
+
+.preview img {
+  max-width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  margin-bottom: 20px;
+}
+
+.result {
+  margin-top: 20px;
+  font-weight: bold;
+  color: #34495e;
+  font-size: 16px;
+}

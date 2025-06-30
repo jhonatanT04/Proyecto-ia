@@ -1,0 +1,28 @@
+<div class="container">
+  <h2> Analizador de Imágenes - Enfermedades del Tórax</h2>
+
+  <div class="button-group">
+    <label class="file-btn">
+     Subir Imagen
+      <input type="file" accept="image/*" (change)="onFileSelected($event)" capture="environment">
+    </label>
+    <button class="cam-btn" (click)="startCamera()"> Usar Cámara</button>
+  </div>
+
+  <div *ngIf="imagePreview" class="preview">
+    <img [src]="imagePreview" alt="Vista previa" />
+  </div>
+
+  <video #video width="100%" autoplay *ngIf="cameraActive"></video>
+  <canvas #canvas style="display: none;"></canvas>
+
+  <div class="controls" *ngIf="cameraActive">
+    <button (click)="capturePhoto()"> Capturar y Analizar</button>
+    <button (click)="stopCamera()"> Cancelar</button>
+  </div>
+
+  <button class="submit-btn" (click)="uploadImage()" [disabled]="!selectedImage || loading"> Enviar Imagen</button>
+
+  <div class="result" *ngIf="loading">Procesando...</div>
+  <div class="result" *ngIf="predictionResult">Resultado: {{ predictionResult }}</div>
+</div>
