@@ -2,10 +2,12 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
+import { RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-image',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,RouterModule],
   templateUrl: './image.component.html',
   styleUrls: ['./image.component.scss']
 })
