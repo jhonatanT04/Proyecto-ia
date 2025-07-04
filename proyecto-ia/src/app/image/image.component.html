@@ -1,28 +1,47 @@
-<div class="container">
-  <h2> Analizador de Imágenes - Enfermedades del Tórax</h2>
+<div class="analyzer-container">
+  <h1>
+    <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M3 3v18h18V3H3zm16 16H5V5h14v14zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h6v2H7v-2z" />
+    </svg>
+    Análisis de Imágenes Torácicas
+  </h1>
 
-  <div class="button-group">
-    <label class="file-btn">
-     Subir Imagen
-      <input type="file" accept="image/*" (change)="onFileSelected($event)" capture="environment">
+  <div class="actions">
+    <label class="upload-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M5 20h14v-2H5v2zm7-18L5.33 9h4.34v4h4.66V9h4.34L12 2z" fill="currentColor"/>
+      </svg>
+      Subir Imagen
+      <input type="file" accept="image/*" (change)="onFileSelected($event)">
     </label>
-    <button class="cam-btn" (click)="startCamera()"> Usar Cámara</button>
+
+    <button class="camera-btn" (click)="startCamera()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M20 5h-3.17L15 3H9L7.17 5H4c-1.1 0-2 .9-2 2v12a2 
+                 2 0 002 2h16a2 2 0 002-2V7c0-1.1-.9-2-2-2z" fill="currentColor"/>
+      </svg>
+      Cámara
+    </button>
   </div>
 
-  <div *ngIf="imagePreview" class="preview">
+  <div class="media-preview" *ngIf="imagePreview">
     <img [src]="imagePreview" alt="Vista previa" />
   </div>
 
-  <video #video width="100%" autoplay *ngIf="cameraActive"></video>
+  <video #video autoplay *ngIf="cameraActive" class="video-preview"></video>
   <canvas #canvas style="display: none;"></canvas>
 
   <div class="controls" *ngIf="cameraActive">
-    <button (click)="capturePhoto()"> Capturar y Analizar</button>
-    <button (click)="stopCamera()"> Cancelar</button>
+    <button class="capture-btn" (click)="capturePhoto()">Capturar</button>
+    <button class="cancel-btn" (click)="stopCamera()">Cancelar</button>
   </div>
 
-  <button class="submit-btn" (click)="uploadImage()" [disabled]="!selectedImage || loading"> Enviar Imagen</button>
+  <button class="submit-btn" (click)="uploadImage()" [disabled]="!selectedImage || loading">
+    Analizar Imagen
+  </button>
 
-  <div class="result" *ngIf="loading">Procesando...</div>
-  <div class="result" *ngIf="predictionResult">Resultado: {{ predictionResult }}</div>
+  <div class="feedback" *ngIf="loading">Analizando...</div>
+  <div class="feedback result" *ngIf="predictionResult">
+    <strong>Resultado:</strong> {{ predictionResult }}
+  </div>
 </div>

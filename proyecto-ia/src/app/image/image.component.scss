@@ -1,56 +1,89 @@
-.container {
-  max-width: 460px;
-  margin: 30px auto;
+.analyzer-container {
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 40px 30px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.05);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: #1a1a1a;
   text-align: center;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 0 14px rgba(0,0,0,0.15);
-  background: linear-gradient(to top right, #f0f4f7, #ffffff);
-  font-family: "Segoe UI", sans-serif;
 }
 
-h2 {
-  margin-bottom: 25px;
-  color: #2c3e50;
-}
-
-.button-group {
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 30px;
   display: flex;
-  justify-content: space-around;
-  margin-bottom: 20px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #333;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 25px;
   flex-wrap: wrap;
 }
 
-.file-btn, .cam-btn, .submit-btn, .controls button {
-  background-color: #2980b9;
-  color: white;
-  padding: 12px 20px;
-  font-size: 15px;
+.upload-btn,
+.camera-btn,
+.capture-btn,
+.cancel-btn,
+.submit-btn {
+  background-color: #2c3e50;
+  color: #fff;
+  padding: 10px 18px;
+  font-size: 14px;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
-  margin: 8px 5px;
-  transition: background-color 0.3s ease;
+  transition: all 0.25s ease;
 }
 
-.file-btn:hover, .cam-btn:hover, .submit-btn:hover, .controls button:hover {
-  background-color: #1f618d;
-}
-
-.file-btn input {
+.upload-btn input {
   display: none;
 }
 
-.preview img {
-  max-width: 100%;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+.upload-btn:hover,
+.camera-btn:hover,
+.capture-btn:hover,
+.cancel-btn:hover,
+.submit-btn:hover {
+  background-color: #1b2a38;
+}
+
+.cancel-btn {
+  background-color: #c0392b;
+}
+
+.media-preview img,
+.video-preview {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
-.result {
+.feedback {
   margin-top: 20px;
-  font-weight: bold;
-  color: #34495e;
-  font-size: 16px;
+  font-size: 15px;
+  color: #2c3e50;
+}
+
+.result {
+  font-weight: 600;
 }
