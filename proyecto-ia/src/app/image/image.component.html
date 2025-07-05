@@ -9,7 +9,7 @@
   <div class="actions">
     <label class="upload-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-        <path d="M5 20h14v-2H5v2zm7-18L5.33 9h4.34v4h4.66V9h4.34L12 2z" fill="currentColor"/>
+        <path d="M5 20h14v-2H5v2zm7-18L5.33 9h4.34v4h4.66V9h4.34L12 2z" fill="currentColor" />
       </svg>
       Subir Imagen
       <input type="file" accept="image/*" (change)="onFileSelected($event)">
@@ -18,7 +18,7 @@
     <button class="camera-btn" (click)="startCamera()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
         <path d="M20 5h-3.17L15 3H9L7.17 5H4c-1.1 0-2 .9-2 2v12a2 
-                 2 0 002 2h16a2 2 0 002-2V7c0-1.1-.9-2-2-2z" fill="currentColor"/>
+                 2 0 002 2h16a2 2 0 002-2V7c0-1.1-.9-2-2-2z" fill="currentColor" />
       </svg>
       Cámara
     </button>
@@ -44,4 +44,8 @@
   <div class="feedback result" *ngIf="predictionResult">
     <strong>Resultado:</strong> {{ predictionResult }}
   </div>
+  <audio *ngIf="audioUrl" #audioPlayer controls>
+    Tu navegador no soporta el elemento de audio.
+  </audio>
+
 </div>

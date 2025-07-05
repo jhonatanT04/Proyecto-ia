@@ -3,8 +3,10 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 import numpy as np
 import io
+import asyncio
 import os
 from flask_cors import CORS
+from google.cloud import texttospeech
 
 app = Flask(__name__)
 CORS(app)
@@ -41,14 +43,36 @@ def predict():
         predicted_class = class_names[predicted_index]
         confidence = float(np.max(prediction[0]))
 
-        return jsonify({
-            'prediction': predicted_class,
-            'confidence': round(confidence * 100, 2)  
-        })
+        
+        text = f"La predicción es {predicted_class} con una confianza del {round(confidence * 100)} por ciento."
 
+        
+        client = texttospeech.TextToSpeechClient.from_service_account_file("gcp_key.json")
+        input_text = texttospeech.SynthesisInput(text=text)
+        voice = texttospeech.VoiceSelectionParams(
+            language_code="es-US",
+            ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
+        )
+        audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
+
+        
+        response = client.synthesize_speech(input=input_text, voice=voice, audio_config=audio_config)
+
+        asyncio.sleep(2)
+        return (
+            response.audio_content,
+            200,
+            {
+                'Content-Type': 'audio/mpeg',
+                'Content-Disposition': 'inline; filename=prediccion.mp3'
+            }
+        )
     except Exception as e:
-        print(" Error:", str(e))
+        print("Error:", str(e))
         return jsonify({'error': str(e)}), 500
+
+
+
 @app.route('/')
 def index():
     return jsonify({'message': 'API imagenes'}), 200
