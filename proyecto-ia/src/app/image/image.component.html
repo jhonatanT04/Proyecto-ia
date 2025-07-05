@@ -43,9 +43,7 @@
   <div class="feedback" *ngIf="loading">Analizando...</div>
   <div class="feedback result" *ngIf="predictionResult">
     <strong>Resultado:</strong> {{ predictionResult }}
+    <button (click)="reproducirAudio()">Reproducir Audio</button>
   </div>
-  <audio *ngIf="audioUrl" #audioPlayer controls>
-    Tu navegador no soporta el elemento de audio.
-  </audio>
-
+  
 </div>

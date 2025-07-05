@@ -17,8 +17,6 @@ export class ImageComponent {
   predictionResult: string = '';
   loading = false;
   cameraActive = false;
-  @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
-  audioUrl: string | null = null;
 
   @ViewChild('video') videoElement!: ElementRef;
   @ViewChild('canvas') canvasElement!: ElementRef;
@@ -75,33 +73,32 @@ export class ImageComponent {
   }
 
   uploadImage(): void {
-  if (!this.selectedImage) return;
+    if (!this.selectedImage) return;
 
-  const formData = new FormData();
-  formData.append('image', this.selectedImage);
-  this.loading = true;
-  this.predictionResult = '';
-  this.audioUrl = null;
+    const formData = new FormData();
+    formData.append('image', this.selectedImage);
+    this.loading = true;
+    this.predictionResult = '';
 
-  this.http.post('http://localhost:5000/predict', formData, {
-    responseType: 'blob'  // 👈 importante para recibir audio
-  }).subscribe({
-    next: blob => {
-      this.audioUrl = URL.createObjectURL(blob);
-
-      const audio = this.audioPlayer.nativeElement;
-      audio.load(); // fuerza a actualizar el reproductor
-      audio.play(); // lo reproduce automáticamente
-
-      // También podrías decodificar texto si el backend lo enviara como JSON.
-      this.predictionResult = 'Análisis completado. Escuche el resultado.';
-      this.loading = false;
-    },
-    error: err => {
-      this.predictionResult = 'Error al procesar la imagen.';
-      this.loading = false;
-    }
-  });
-}
-
+    this.http.post<any>('http://localhost:5000/predict', formData).subscribe({
+      next: res => {
+        this.predictionResult = JSON.stringify(res.prediction);
+        this.loading = false;
+      },
+      error: err => {
+        this.predictionResult = 'Error al procesar la imagen.';
+        this.loading = false;
+      }
+    });
+  }
+  obtenerAudio() {
+    return this.http.get('http://localhost:5000/audio', { responseType: 'blob' });
+  }
+  reproducirAudio() {
+    this.obtenerAudio().subscribe(blob => {
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.play();
+    });
+  }
 }

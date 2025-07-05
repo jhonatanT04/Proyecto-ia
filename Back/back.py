@@ -1,10 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from tensorflow.keras.models import load_model
 from PIL import Image
 import numpy as np
 import io
-import asyncio
+
 import os
+from fastapi.responses import FileResponse
 from flask_cors import CORS
 from google.cloud import texttospeech
 
@@ -43,9 +44,7 @@ def predict():
         predicted_class = class_names[predicted_index]
         confidence = float(np.max(prediction[0]))
 
-        
         text = f"La predicción es {predicted_class} con una confianza del {round(confidence * 100)} por ciento."
-
         
         client = texttospeech.TextToSpeechClient.from_service_account_file("gcp_key.json")
         input_text = texttospeech.SynthesisInput(text=text)
@@ -57,24 +56,23 @@ def predict():
 
         
         response = client.synthesize_speech(input=input_text, voice=voice, audio_config=audio_config)
+        with open("salida.mp3", "wb") as out:
+            out.write(response.audio_content)
+            print("Audio guardado en 'salida.mp3'")
 
-        asyncio.sleep(2)
-        return (
-            response.audio_content,
-            200,
-            {
-                'Content-Type': 'audio/mpeg',
-                'Content-Disposition': 'inline; filename=prediccion.mp3'
-            }
-        )
+        return jsonify({
+            'prediction': predicted_class,
+            'confidence': round(confidence * 100, 2)  
+        })
+
     except Exception as e:
-        print("Error:", str(e))
+        print(" Error:", str(e))
         return jsonify({'error': str(e)}), 500
 
 
+@app.route("/audio", methods=["GET"])
+def get_audio():
+    return send_file("salida.mp3", mimetype="audio/mpeg")
 
-@app.route('/')
-def index():
-    return jsonify({'message': 'API imagenes'}), 200
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
