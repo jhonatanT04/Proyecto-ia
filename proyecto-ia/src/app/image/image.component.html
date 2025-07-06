@@ -43,6 +43,7 @@
   <div class="feedback" *ngIf="loading">Analizando...</div>
   <div class="feedback result" *ngIf="predictionResult">
     <strong>Resultado:</strong> {{ predictionResult }}
+    <strong>Confianza:</strong> {{ confidence }}%
     <br>
     <button (click)="reproducirAudio()" class="reproducir-btn">Reproducir Audio</button>
   </div>

@@ -22,11 +22,11 @@ with open(LABELS_PATH, 'r', encoding='utf-8') as f:
     class_names = [line.strip() for line in f if line.strip()]
 print(f"Clases cargadas: {class_names}")
 
-def preprocess_image(image_bytes, target_size=(128, 128)):
-    img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+def preprocess_image(image_bytes, target_size=(500, 500)):
+    img = Image.open(io.BytesIO(image_bytes)).convert('RGB')  
     img = img.resize(target_size)
-    img_array = np.array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
+    img_array = np.array(img, dtype=np.float32) / 255.0
+    img_array = np.expand_dims(img_array, axis=0) 
     return img_array
 
 @app.route('/predict', methods=['POST'])
@@ -40,6 +40,7 @@ def predict():
         image_array = preprocess_image(image_bytes)
 
         prediction = model.predict(image_array)
+        # print(prediction[0])
         predicted_index = int(np.argmax(prediction[0]))
         predicted_class = class_names[predicted_index]
         confidence = float(np.max(prediction[0]))
@@ -59,7 +60,7 @@ def predict():
         with open("salida.mp3", "wb") as out:
             out.write(response.audio_content)
             print("Audio guardado en 'salida.mp3'")
-
+        
         return jsonify({
             'prediction': predicted_class,
             'confidence': round(confidence * 100, 2)  

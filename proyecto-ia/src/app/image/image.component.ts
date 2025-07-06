@@ -17,7 +17,7 @@ export class ImageComponent {
   predictionResult: string = '';
   loading = false;
   cameraActive = false;
-
+  confidence: string = '';
   @ViewChild('video') videoElement!: ElementRef;
   @ViewChild('canvas') canvasElement!: ElementRef;
   videoStream: MediaStream | null = null;
@@ -83,6 +83,7 @@ export class ImageComponent {
     this.http.post<any>('http://localhost:5000/predict', formData).subscribe({
       next: res => {
         this.predictionResult = JSON.stringify(res.prediction);
+        this.confidence = JSON.stringify(res.confidence);
         this.loading = false;
       },
       error: err => {
