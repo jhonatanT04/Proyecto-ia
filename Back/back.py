@@ -14,9 +14,23 @@ CORS(app)
 
 MODEL_PATH = 'modelo_val.h5'
 model = load_model(MODEL_PATH)
-print("Modelo cargado correctamente.")
 
-# Cargar las clases desde un archivo de texto
+def generarAudio(predicted_class, confidence):
+    text = f"La predicción es {predicted_class} con una confianza del {round(confidence * 100)} por ciento."
+        
+    client = texttospeech.TextToSpeechClient.from_service_account_file("gcp_key.json")
+    input_text = texttospeech.SynthesisInput(text=text)
+    voice = texttospeech.VoiceSelectionParams(
+        language_code="es-US",
+        ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
+    )
+    audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
+    
+    response = client.synthesize_speech(input=input_text, voice=voice, audio_config=audio_config)
+    with open("salida.mp3", "wb") as out:
+        out.write(response.audio_content)
+        print("Audio guardado en 'salida.mp3'")
+
 LABELS_PATH = 'labels.txt'
 with open(LABELS_PATH, 'r', encoding='utf-8') as f:
     class_names = [line.strip() for line in f if line.strip()]
@@ -40,27 +54,12 @@ def predict():
         image_array = preprocess_image(image_bytes)
 
         prediction = model.predict(image_array)
-        # print(prediction[0])
+        print(prediction[0])
         predicted_index = int(np.argmax(prediction[0]))
         predicted_class = class_names[predicted_index]
         confidence = float(np.max(prediction[0]))
 
-        text = f"La predicción es {predicted_class} con una confianza del {round(confidence * 100)} por ciento."
-        
-        client = texttospeech.TextToSpeechClient.from_service_account_file("gcp_key.json")
-        input_text = texttospeech.SynthesisInput(text=text)
-        voice = texttospeech.VoiceSelectionParams(
-            language_code="es-US",
-            ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
-        )
-        audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
-
-        
-        response = client.synthesize_speech(input=input_text, voice=voice, audio_config=audio_config)
-        with open("salida.mp3", "wb") as out:
-            out.write(response.audio_content)
-            print("Audio guardado en 'salida.mp3'")
-        
+        #generarAudio(predicted_class, confidence)
         return jsonify({
             'prediction': predicted_class,
             'confidence': round(confidence * 100, 2)  
