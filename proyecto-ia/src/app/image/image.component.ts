@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-image',
   standalone: true,
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './image.component.html',
   styleUrls: ['./image.component.scss']
 })
@@ -82,15 +82,22 @@ export class ImageComponent {
 
     this.http.post<any>('http://localhost:5000/predict', formData).subscribe({
       next: res => {
-        this.predictionResult = JSON.stringify(res.prediction);
-        this.confidence = JSON.stringify(res.confidence);
+        if (res.top3 && res.top3.length > 0) {
+          this.predictionResult = res.top3[0].condition;
+          this.confidence = res.top3[0].confidence.toFixed(2) + '%';
+        } else {
+          this.predictionResult = 'No se encontró predicción';
+          this.confidence = '';
+        }
         this.loading = false;
       },
       error: err => {
         this.predictionResult = 'Error al procesar la imagen.';
+        this.confidence = '';
         this.loading = false;
       }
     });
+
   }
   obtenerAudio() {
     return this.http.get('http://localhost:5000/audio', { responseType: 'blob' });
