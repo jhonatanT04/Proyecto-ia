@@ -18,13 +18,13 @@ export class ImageComponent {
   loading = false;
   cameraActive = false;
   confidence: string = '';
+  explicacion: string = '';
   @ViewChild('video') videoElement!: ElementRef;
   @ViewChild('canvas') canvasElement!: ElementRef;
   videoStream: MediaStream | null = null;
 
   constructor(private http: HttpClient) { }
 
-  //Modificación 
   onFileSelected(event: any): void {
     this.selectedImage = event.target.files[0];
     const reader = new FileReader();
@@ -74,32 +74,37 @@ export class ImageComponent {
   }
 
   uploadImage(): void {
-    if (!this.selectedImage) return;
+  if (!this.selectedImage) return;
 
-    const formData = new FormData();
-    formData.append('image', this.selectedImage);
-    this.loading = true;
-    this.predictionResult = '';
+  const formData = new FormData();
+  formData.append('image', this.selectedImage);
+  this.loading = true;
+  this.predictionResult = '';
+  this.confidence = '';
+  this.explicacion = ''; // Limpiar antes de nuevo análisis
 
-    this.http.post<any>('http://localhost:5000/predict', formData).subscribe({
-      next: res => {
-        if (res.top3 && res.top3.length > 0) {
-          this.predictionResult = res.top3[0].condition;
-          this.confidence = res.top3[0].confidence.toFixed(2) + '%';
-        } else {
-          this.predictionResult = 'No se encontró predicción';
-          this.confidence = '';
-        }
-        this.loading = false;
-      },
-      error: err => {
-        this.predictionResult = 'Error al procesar la imagen.';
+  this.http.post<any>('http://localhost:5000/predict', formData).subscribe({
+    next: res => {
+      if (res.top3 && res.top3.length > 0) {
+        this.predictionResult = res.top3[0].condition;
+        this.confidence = res.top3[0].confidence.toFixed(2) + '%';
+      } else {
+        this.predictionResult = 'No se encontró predicción';
         this.confidence = '';
-        this.loading = false;
       }
-    });
 
-  }
+      this.explicacion = res.explanation || 'No se pudo generar explicación';
+      this.loading = false;
+    },
+    error: err => {
+      this.predictionResult = 'Error al procesar la imagen.';
+      this.confidence = '';
+      this.explicacion = '';
+      this.loading = false;
+    }
+  });
+}
+
   obtenerAudio() {
     return this.http.get('http://localhost:5000/audio', { responseType: 'blob' });
   }

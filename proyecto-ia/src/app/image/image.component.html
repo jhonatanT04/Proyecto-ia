@@ -40,13 +40,21 @@
     Analizar Imagen
   </button>
 
-  <!--Modificaciones-->
   <div class="feedback" *ngIf="loading">Analizando...</div>
-  <div class="feedback result" *ngIf="predictionResult">
-    <strong>Resultado:</strong> {{ predictionResult }}
-    <strong>Confianza:</strong> {{ confidence }}%
-    <br>
-    <button (click)="reproducirAudio()" class="reproducir-btn">Reproducir Audio</button>
+  <div class="resultado-container" *ngIf="predictionResult">
+    <h2>🩺 Diagnóstico:</h2>
+    <p class="diagnostico">
+      {{ predictionResult }} <span class="confianza">({{ confidence }} de confianza)</span>
+    </p>
+
+    <div class="explicacion-box" *ngIf="explicacion">
+      <h3>🧾 Explicación detallada:</h3>
+      <div class="explicacion-texto">
+        <p [innerHTML]="explicacion"></p>
+      </div>
+    </div>
+
+    <button (click)="reproducirAudio()" class="reproducir-btn">🔊 Reproducir Audio</button>
   </div>
-  
+
 </div>
