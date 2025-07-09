@@ -24,6 +24,7 @@ export class ImageComponent {
 
   constructor(private http: HttpClient) { }
 
+  //Modificación 
   onFileSelected(event: any): void {
     this.selectedImage = event.target.files[0];
     const reader = new FileReader();
