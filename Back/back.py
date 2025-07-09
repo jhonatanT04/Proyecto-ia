@@ -13,6 +13,7 @@ import os
 app = Flask(__name__)
 CORS(app)
 
+# Configuración de la ruta del modelo
 with torch.serialization.safe_globals([xrv.models.DenseNet, torch.nn.modules.container.Sequential]):
     model = torch.load("Back/densenet121_res224_all_completo.pth", weights_only=False, map_location="cpu")
 
