@@ -1,0 +1,100 @@
+nav {
+  background-color: #2563eb;
+  color: #fff;
+  padding: 1rem;
+  
+  margin-bottom: 1.5rem;
+}
+
+nav h1 {
+  font-size: 1.5rem;
+}
+
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .dashboard {
+    
+    grid-template-columns: 1fr 4fr;
+  }
+}
+
+.disease-list{
+    padding-left: 10px;
+}
+.disease-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.disease-list button {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.disease-list button:hover {
+  background: #bfdbfe; /* azul claro */
+}
+
+/* Panel de explicación */
+.disease-details {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.disease-details h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.disease-details p {
+  margin: 0;
+  color: #333;
+}
+
+.btn-subir {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.btn-historial {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transform: translateX(-140px);
+}
+
+.btn-subir:hover {  
+  background-color: #45a049;
+}
+

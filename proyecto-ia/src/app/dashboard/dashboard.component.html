@@ -1,0 +1,28 @@
+<div class="dashboard-container">
+  <nav>
+    <h1 (click)="selctDefect()">Dashboard de Enfermedades</h1>
+    <a [routerLink]="['/image']" class="btn-subir">Subir Imagen</a>
+    <a [routerLink]="['/historial']" class="btn-historial">Historial</a>
+  </nav>
+
+  <div class="dashboard">
+    
+    <div class="disease-list">
+      <h2>Lista de Enfermedades</h2>
+      <ul>
+        <li *ngFor="let disease of diseases">
+          <button (click)="selectDisease(disease)">
+            {{ disease.name }}
+          </button>
+        </li>
+      </ul>
+    </div>
+    <div class="disease-details" *ngIf="selectedDisease">
+      <h2>{{ selectedDisease.name }}</h2>
+      <p>
+        {{ selectedDisease.explanation }}
+      </p>
+
+    </div>
+  </div>
+</div>
