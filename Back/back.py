@@ -4,14 +4,26 @@ import torch
 import torchxrayvision as xrv
 import torchvision
 import skimage
-import os
+from datetime import datetime
+from werkzeug.utils import secure_filename
 from google.cloud import texttospeech
 import cohere
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 co = cohere.Client("HKewuzbrGI2Znjnxe0YJLmxhhUnkbqXjW9GjzuCc")
 
 app = Flask(__name__)
 CORS(app)
+
+def get_connection():
+    return psycopg2.connect(
+        host="localhost",
+        port=5432,
+        database="ia",
+        user="postgres",
+        password="root"
+    )
 
 with torch.serialization.safe_globals([xrv.models.DenseNet, torch.nn.modules.container.Sequential]):
     model = torch.load("Back/densenet121_res224_all_completo.pth", weights_only=False, map_location="cpu")
@@ -27,11 +39,11 @@ def preprocess_image(file_storage):
     img = skimage.io.imread(file_storage)
     img = xrv.datasets.normalize(img, 255)
     if len(img.shape) == 3:
-        img = img.mean(2)  
-    img = img[None, ...]  
+        img = img.mean(2)
+    img = img[None, ...]
     img = transform(img)
     img = torch.from_numpy(img).float()
-    return img[None, ...]  
+    return img[None, ...]
 
 def generar_audio(texto):
     client = texttospeech.TextToSpeechClient.from_service_account_file("Back/sistemas-463001-f1a542f8516e.json")
@@ -50,25 +62,19 @@ def generar_audio(texto):
 
     with open("Back/salida.mp3", "wb") as out:
         out.write(response.audio_content)
-    print("Audio generado en salida.mp3")
+    print("Audio generado")
 
 def generar_explicacion_cohere(condition, confidence):
     prompt = f"""
-    Eres un médico especializado. Explica qué significa el diagnóstico '{condition}' con una confianza del {round(confidence * 100, 2)}%.
-    Describe la enfermedad, posibles síntomas y una recomendación básica para el paciente. Sé claro y profesional.
+    Eres un médico. Resume brevemente qué es '{condition}' con una confianza del {round(confidence * 100, 2)}%.
+    Describe la enfermedad en una línea, síntomas comunes y una recomendación rápida.
     """
-
     response = co.chat(
         model="command-xlarge-nightly",
         message=prompt,
-        temperature=0.7
+        temperature=0.5
     )
-
-    texto_con_asteriscos = response.text.strip()
-    texto_limpio = texto_con_asteriscos.replace('*', '')  
-
-    return texto_limpio
-
+    return response.text.strip().replace('*', '')
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -77,6 +83,9 @@ def predict():
             return jsonify({'error': 'No se envió ninguna imagen'}), 400
 
         file = request.files['image']
+        filename = secure_filename(file.filename)
+        file_path = filename  
+
         img_tensor = preprocess_image(file)
 
         with torch.no_grad():
@@ -103,9 +112,30 @@ def predict():
 @app.route('/audio', methods=['GET'])
 def get_audio():
     try:
-        return send_file("salida.mp3", mimetype="audio/mpeg", as_attachment=False)
+        return send_file("Back/salida.mp3", mimetype="audio/mpeg", as_attachment=False)
     except FileNotFoundError:
         return jsonify({'error': 'El archivo de audio no existe'}), 404
+
+@app.route('/historial', methods=['GET'])
+def historial():
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    cursor.execute("SELECT id, fecha, diagnostico, explicacion, ruta_imagen FROM analisis ORDER BY fecha DESC")
+    datos = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    resultado = []
+    for row in datos:
+        resultado.append({
+            "id": row["id"],
+            "fecha": row["fecha"].strftime("%Y-%m-%d %H:%M"),
+            "diagnostico": row["diagnostico"],
+            "explicacion": row["explicacion"],
+            "imagen": row["ruta_imagen"].replace('\\', '/')  
+        })
+
+    return jsonify(resultado)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
