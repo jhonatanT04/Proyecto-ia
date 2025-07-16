@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import torch
 import torchxrayvision as xrv
@@ -10,6 +10,7 @@ from google.cloud import texttospeech
 import cohere
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import os
 
 co = cohere.Client("HKewuzbrGI2Znjnxe0YJLmxhhUnkbqXjW9GjzuCc")
 
@@ -27,7 +28,6 @@ def get_connection():
 
 with torch.serialization.safe_globals([xrv.models.DenseNet, torch.nn.modules.container.Sequential]):
     model = torch.load("Back/densenet121_res224_all_completo.pth", weights_only=False, map_location="cpu")
-
 model.eval()
 
 transform = torchvision.transforms.Compose([
@@ -35,8 +35,8 @@ transform = torchvision.transforms.Compose([
     xrv.datasets.XRayResizer(224),
 ])
 
-def preprocess_image(file_storage):
-    img = skimage.io.imread(file_storage)
+def preprocess_image(file_path):
+    img = skimage.io.imread(file_path)
     img = xrv.datasets.normalize(img, 255)
     if len(img.shape) == 3:
         img = img.mean(2)
@@ -84,9 +84,10 @@ def predict():
 
         file = request.files['image']
         filename = secure_filename(file.filename)
-        file_path = filename  
+        ruta_guardada = os.path.join("Back", "imagenes", filename)
+        file.save(ruta_guardada)
 
-        img_tensor = preprocess_image(file)
+        img_tensor = preprocess_image(ruta_guardada)
 
         with torch.no_grad():
             outputs_logits = model(img_tensor)
@@ -99,6 +100,21 @@ def predict():
         explicacion = generar_explicacion_cohere(top_condition, top_confidence)
         generar_audio(explicacion)
 
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO analisis (fecha, diagnostico, explicacion, ruta_imagen)
+            VALUES (%s, %s, %s, %s)
+        """, (
+            datetime.now(),
+            top_condition,
+            explicacion,
+            ruta_guardada
+        ))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
         return jsonify({
             "results": {k: round(float(v), 4) for k, v in results.items()},
             "top3": [{"condition": k, "confidence": round(v * 100, 2)} for k, v in top3],
@@ -106,7 +122,7 @@ def predict():
         })
 
     except Exception as e:
-        print("Error:", str(e))
+        print("Error en /predict:", str(e))
         return jsonify({'error': str(e)}), 500
 
 @app.route('/audio', methods=['GET'])
@@ -118,24 +134,36 @@ def get_audio():
 
 @app.route('/historial', methods=['GET'])
 def historial():
-    conn = get_connection()
-    cursor = conn.cursor(cursor_factory=RealDictCursor)
-    cursor.execute("SELECT id, fecha, diagnostico, explicacion, ruta_imagen FROM analisis ORDER BY fecha DESC")
-    datos = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor.execute("SELECT id, fecha, diagnostico, explicacion, ruta_imagen FROM analisis ORDER BY fecha DESC")
+        datos = cursor.fetchall()
+        cursor.close()
+        conn.close()
 
-    resultado = []
-    for row in datos:
-        resultado.append({
-            "id": row["id"],
-            "fecha": row["fecha"].strftime("%Y-%m-%d %H:%M"),
-            "diagnostico": row["diagnostico"],
-            "explicacion": row["explicacion"],
-            "imagen": row["ruta_imagen"].replace('\\', '/')  
-        })
+        resultado = []
+        for row in datos:
+            resultado.append({
+                "id": row["id"],
+                "fecha": row["fecha"].strftime("%Y-%m-%d %H:%M"),
+                "diagnostico": row["diagnostico"],
+                "explicacion": row["explicacion"],
+                "imagen": "/imagenes/" + os.path.basename(row["ruta_imagen"])
+            })
 
-    return jsonify(resultado)
+        return jsonify(resultado)
+    except Exception as e:
+        print("Error en /historial:", str(e))
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/imagenes/<path:filename>')
+def serve_imagen(filename):
+    try:
+        return send_from_directory(os.path.join("imagenes"), filename)
+    except Exception as e:
+        print("Error al servir imagen:", str(e))
+        return jsonify({'error': 'Imagen no encontrada'}), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

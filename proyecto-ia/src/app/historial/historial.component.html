@@ -1,25 +1,28 @@
 <div class="tabla-container">
-    <table class="tabla-historial">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Fecha</th>
-                <th>Diagnóstico</th>
-                <th>Explicación</th>
-                <th>Imagen</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let item of historial; let i = index">
-                <td>{{ i + 1 }}</td>
-                <td>{{ item.fecha }}</td>
-                <td>{{ item.diagnostico }}</td>
-                <td>{{ item.explicacion }}</td>
-                <td>
-                    <img [src]="item.imagen" alt="Imagen Diagnóstico"
-                        style="max-width: 300px; max-height: 300px; object-fit: contain;" />
-                </td>
-            </tr>
-        </tbody>
-    </table>
+  <table class="tabla-historial">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Fecha</th>
+        <th>Diagnóstico</th>
+        <th>Explicación</th>
+        <th>Imagen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of historial; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ item.fecha }}</td>
+        <td>{{ item.diagnostico }}</td>
+        <td>{{ item.explicacion }}</td>
+        <td>
+          <img
+            [src]="'http://localhost:5000' + item.imagen"
+            alt="Imagen Diagnóstico"
+            class="imagen-diagnostico"
+          />
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

@@ -2,42 +2,70 @@
   width: 100%;
   overflow-x: auto;
   padding: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9fbff;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(37, 99, 235, 0.1); 
 }
 
 .tabla-historial {
   width: 100%;
-  border-collapse: collapse;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 14px;
-  color: #333;
-  background-color: #fff;
+  border-collapse: separate;
+  border-spacing: 0 10px; 
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+}
+
+.tabla-historial thead tr {
+  background-color: #2563eb; 
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 13px;
+  border-radius: 12px 12px 0 0;
+}
+
+.tabla-historial thead th {
+  padding: 14px 20px;
+  text-align: left;
+}
+
+.tabla-historial tbody tr {
+  background-color: #f1f7ff; 
+  transition: background-color 0.3s ease;
   border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 0 0 1px transparent; 
+}
 
-  th, td {
-    padding: 12px 15px;
-    text-align: left;
-    vertical-align: top;
-  }
+.tabla-historial tbody tr:hover {
+  background-color: #dbe9ff; 
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
+}
 
-  th {
-    background-color: #f1f1f1;
-    color: #222;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 12px;
-  }
+.tabla-historial tbody td {
+  padding: 15px 20px;
+  vertical-align: middle;
+  color: #1e293b; 
+}
 
-  tr:nth-child(even) {
-    background-color: #fafafa;
-  }
+.tabla-historial tbody td:first-child {
+  font-weight: 600;
+  color: #2563eb;
+}
 
-  img {
-    max-width: 120px;
-    max-height: 100px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    object-fit: contain;
-  }
+.imagen-diagnostico {
+  max-width: 140px;
+  max-height: 100px;
+  border-radius: 8px;
+  border: 1.5px solid #2563eb;
+  object-fit: contain;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.imagen-diagnostico:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
 }
