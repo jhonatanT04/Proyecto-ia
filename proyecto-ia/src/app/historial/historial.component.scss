@@ -1,24 +1,30 @@
 .tabla-container {
   width: 100%;
   overflow-x: auto;
-  padding: 1rem;
+  padding: 1.5rem 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f9fbff;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(37, 99, 235, 0.1); 
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12);
+  margin-left: 0;
+  transition: box-shadow 0.3s ease;
+}
+
+.tabla-container:hover {
+  box-shadow: 0 12px 36px rgba(37, 99, 235, 0.22);
 }
 
 .tabla-historial {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0 10px; 
+  border-spacing: 0 10px;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
 }
 
 .tabla-historial thead tr {
-  background-color: #2563eb; 
+  background-color: #2563eb;
   color: white;
   font-weight: 700;
   text-transform: uppercase;
@@ -32,21 +38,21 @@
 }
 
 .tabla-historial tbody tr {
-  background-color: #f1f7ff; 
-  transition: background-color 0.3s ease;
+  background-color: #f1f7ff;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
   border-radius: 10px;
-  box-shadow: 0 0 0 1px transparent; 
+  box-shadow: 0 0 0 1px transparent;
 }
 
 .tabla-historial tbody tr:hover {
-  background-color: #dbe9ff; 
+  background-color: #dbe9ff;
   box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
 }
 
 .tabla-historial tbody td {
   padding: 15px 20px;
   vertical-align: middle;
-  color: #1e293b; 
+  color: #1e293b;
 }
 
 .tabla-historial tbody td:first-child {
@@ -61,11 +67,64 @@
   border: 1.5px solid #2563eb;
   object-fit: contain;
   box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }
 
 .imagen-diagnostico:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tabla-historial thead {
+    display: none;
+  }
+
+  .tabla-historial, 
+  .tabla-historial tbody, 
+  .tabla-historial tr, 
+  .tabla-historial td {
+    display: block;
+    width: 100%;
+  }
+
+  .tabla-historial tbody tr {
+    margin-bottom: 1rem;
+    background-color: #f9fbff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.15);
+    padding: 15px;
+  }
+
+  .tabla-historial tbody td {
+    padding: 10px 15px;
+    text-align: right;
+    position: relative;
+    padding-left: 50%;
+    color: #1e293b;
+  }
+
+  .tabla-historial tbody td:first-child {
+    color: #2563eb;
+  }
+
+  .tabla-historial tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    padding-left: 15px;
+    font-weight: 600;
+    text-align: left;
+    color: #2563eb;
+  }
+
+  .imagen-diagnostico {
+    max-width: 100%;
+    max-height: 200px;
+    display: block;
+    margin: 10px auto 0 auto;
+  }
 }
