@@ -1,12 +1,12 @@
 <div class="dashboard-container">
   <nav>
-    <h1 (click)="selctDefect()">Dashboard de Enfermedades</h1>
+    <h1 (click)="selctDefect()">Proyecto de Enfermedades del Pulmón </h1>
     <a [routerLink]="['/image']" class="btn-subir">Subir Imagen</a>
     <a [routerLink]="['/historial']" class="btn-historial">Historial</a>
   </nav>
 
   <div class="dashboard">
-    
+
     <div class="disease-list">
       <h2>Lista de Enfermedades</h2>
       <ul>
@@ -19,10 +19,15 @@
     </div>
     <div class="disease-details" *ngIf="selectedDisease">
       <h2>{{ selectedDisease.name }}</h2>
-      <p>
-        {{ selectedDisease.explanation }}
-      </p>
-
+      <div class="contenido">
+        <p>
+          {{ selectedDisease.explanation }}
+        </p>
+        <div class="a">
+          <img src="{{ selectedDisease.ruta }}" alt="Descripción de la imagen">
+        </div>
+        
+      </div>
     </div>
   </div>
 </div>
